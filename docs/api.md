@@ -64,7 +64,7 @@ Logs out the current user.
 Response: { "message": "Logged out successfully" }
 ```
 
-GET /auth/me
+### `GET /auth/me`
 Returns current authenticated user.
 
 ```json
@@ -79,10 +79,10 @@ Returns current authenticated user.
 ---
 
 ## 2. User Routes
-GET /users/me
+### `GET /users/me`
 Returns user profile.
 
-PATCH /users/me
+### `PATCH /users/me`
 Update current user profile.
 
 ```json
@@ -93,7 +93,7 @@ Update current user profile.
 ---
 
 ## 3. Organization Routes
-POST /organizations
+### `POST /organizations`
 Create a new organization.
 
 ```json
@@ -101,10 +101,10 @@ Create a new organization.
   "name": "Startup Org"
 }
 ```
-GET /organizations
+### `GET /organizations`
 List all organizations user belongs to.
 
-POST /organizations/:orgId/invite
+## `POST /organizations/:orgId/invite`
 Invite a teammate by email.
 
 ```json
@@ -117,10 +117,10 @@ Invite a teammate by email.
 ---
 
 ## 4. Dashboard Routes
-GET /dashboards
+### `GET /dashboards`
 Get list of user dashboards.
 
-POST /dashboards
+### `POST /dashboards`
 Create new dashboard.
 
 ```json
@@ -130,17 +130,17 @@ Create new dashboard.
 }
 ```
 
-GET /dashboards/:id
+### `GET /dashboards/:id`
 Get a single dashboard by ID.
 
-PATCH /dashboards/:id
+### `PATCH /dashboards/:id`
 Update dashboard settings or layout.
 
-DELETE /dashboards/:id
+### `DELETE /dashboards/:id`
 Delete a dashboard.
 
 ## 5. Dataset & Upload Routes
-POST /datasets/upload
+### `POST /datasets/upload`
 Upload a new CSV file.
 
 **Headers:**
@@ -154,16 +154,16 @@ file: (CSV File)
 
 org_id: string
 
-GET /datasets
+### `GET /datasets`
 List datasets for user/org.
 
-GET /datasets/:id
+### `GET /datasets/:id`
 View metadata for specific dataset.
 
 ---
 
 ## 6. Metric Routes
-GET /metrics/:datasetId
+### `GET /metrics/:datasetId`
 Get time-series metrics for a dataset.
 
 **Query Parameters (maybe):**
