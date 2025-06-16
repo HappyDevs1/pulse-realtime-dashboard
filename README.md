@@ -101,22 +101,22 @@ Clone the repo
 bash
 Copy
 Edit
-git clone https://github.com/your-username/realtime-dashboard.git
+git clone https://github.com/HappyDevs1/pulse-realtime-dashboard.git
 cd realtime-dashboard
 Setup environment variables
 bash
 Copy
 Edit
 cp .env.example .env
-# Fill in all required secrets and config values
+### Fill in all required secrets and config values
 Start local development environment
 bash
 Copy
 Edit
-# Using Docker
+### Using Docker
 docker-compose up --build
 
-# Or run manually
+### Or run manually
 cd client && npm install && npm run dev
 cd server && npm install && npm run dev
 🛠 Environment Variables
