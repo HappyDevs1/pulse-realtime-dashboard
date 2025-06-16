@@ -62,9 +62,11 @@ Logs out the current user.
 
 ```yaml
 Response: { "message": "Logged out successfully" }
+```
+
 GET /auth/me
 Returns current authenticated user.
-```
+
 ```json
 {
   "id": "user123",
