@@ -77,8 +77,12 @@ A fully featured, cloud-native dashboard platform designed for real-time team co
 ├── docker-compose.yml
 ├── README.md
 └── .env.example
+```
 
-🚀 Getting Started
+---
+
+## 🚀 Getting Started
+
 1. Prerequisites
 Node.js (v18+)
 
@@ -118,14 +122,18 @@ cd server && npm install && npm run dev
 🛠 Environment Variables
 See .env.example for all necessary environment variables for local development.
 
-🧪 Testing
+---
+
+## 🧪 Testing
 Frontend: npm test (Jest + React Testing Library)
 
 Backend: npm test (Jest + Supertest)
 
 End-to-End: Cypress (WIP)
 
-🧱 Deployment (CI/CD)
+---
+
+## 🧱 Deployment (CI/CD)
 This project is fully integrated with GitHub Actions and Terraform.
 
 CI/CD Pipeline
@@ -135,7 +143,9 @@ Backend: Docker → Push to ECR → Deploy to ECS
 
 Infrastructure: terraform plan/apply via Actions
 
-📊 ETL Pipeline
+---
+
+## 📊 ETL Pipeline
 CSV uploaded to /upload
 
 Stored in S3 raw-uploads bucket
@@ -150,7 +160,10 @@ Inserts to TimescaleDB via RDS Proxy
 
 Lambda logs to CloudWatch
 
-🔐 Authentication & Authorization
+---
+
+## 🔐 Authentication & Authorization
+
 OAuth2 via Google/GitHub
 
 JWT-based session management
@@ -161,22 +174,34 @@ admin, editor, viewer
 
 Secure cookies + HTTPS (via CloudFront or ALB)
 
-📦 TODO / Roadmap
+---
+
+## 📦 TODO / Roadmap
+
  Dashboard export (PDF scheduler)
 
  Role management UI
 
  Audit logging per action
 
- Billing module (optional SaaS)
+ Billing module (maybe)
 
  Plugin SDK for custom widgets
 
-👨‍💻 Contributing
+---
+
+## 👨‍💻 Contributing
+
 Contributions are welcome! Please read the CONTRIBUTING.md before opening a PR.
 
-🧠 License
+---
+
+## 🧠 License
+
 MIT License
 
-📞 Contact
-For questions, feel free to open an issue or reach out via email: you@example.com
+---
+
+## 📞 Contact
+
+For questions, feel free to open an issue or reach out via email: happysfisomahlangu12@gmail.com
