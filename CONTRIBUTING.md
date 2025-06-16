@@ -31,7 +31,7 @@ We aim to foster a safe, collaborative, and respectful community.
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/your-username/realtime-dashboard.git
+   git clone https://github.com/HappyDevs1/pulse-realtime-dashboard.git
    cd realtime-dashboard
 Install dependencies:
 
