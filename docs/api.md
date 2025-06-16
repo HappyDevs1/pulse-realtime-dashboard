@@ -60,7 +60,7 @@ Initiate GitHub OAuth2 flow.
 ### `POST /auth/logout`
 Logs out the current user.
 
-```json
+```yaml
 Response: { "message": "Logged out successfully" }
 GET /auth/me
 Returns current authenticated user.
