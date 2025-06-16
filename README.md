@@ -97,22 +97,17 @@ AWS CLI
 PostgreSQL + Redis (local or containerized)
 
 2. Setup
-Clone the repo
-bash
-Copy
-Edit
+**Clone the repo**
+```bash
 git clone https://github.com/HappyDevs1/pulse-realtime-dashboard.git
 cd realtime-dashboard
-Setup environment variables
-bash
-Copy
-Edit
+```
+**Setup environment variables**
+```bash
 cp .env.example .env
-### Fill in all required secrets and config values
-Start local development environment
-bash
-Copy
-Edit
+```
+**Start local development environment**
+
 ### Using Docker
 docker-compose up --build
 
