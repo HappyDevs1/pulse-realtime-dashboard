@@ -7,7 +7,7 @@ A fully featured, cloud-native dashboard platform designed for real-time team co
 ## 🧩 Tech Stack
 
 ### Frontend
-- [React](https://reactjs.org/) + [TypeScript](https://www.typescriptlang.org/)
+- [Next.js](https://nextjs.org/) + [TypeScript](https://www.typescriptlang.org/)
 - [Vite](https://vitejs.dev/) (or CRA)
 - [Material UI](https://mui.com/)
 - [Redux Toolkit](https://redux-toolkit.js.org/)
