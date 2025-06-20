@@ -49,14 +49,14 @@ A fully featured, cloud-native dashboard platform designed for real-time team co
 
 ```plaintext
 .
-├── client/                # Frontend (React + Vite)
+├── frontend/                # Frontend (React + Vite)
 │   ├── components/
 │   ├── pages/
 │   ├── services/
 │   ├── store/
 │   └── hooks/
 │
-├── server/                # Backend (Node.js + Express)
+├── backend/                # Backend (Node.js + Express)
 │   ├── controllers/
 │   ├── routes/
 │   ├── services/
@@ -67,7 +67,7 @@ A fully featured, cloud-native dashboard platform designed for real-time team co
 ├── etl/                   # ETL Pipeline (Python)
 │   └── lambda_processor.py
 │
-├── infra/                 # Infrastructure (Terraform)
+├── infrastructure/                 # Infrastructure (Terraform)
 │   ├── main.tf
 │   ├── variables.tf
 │   └── modules/
