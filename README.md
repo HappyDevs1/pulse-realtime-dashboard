@@ -7,7 +7,7 @@ A fully featured, cloud-native dashboard platform designed for real-time team co
 ## 🧩 Tech Stack
 
 ### Frontend
-- [React](https://reactjs.org/) + [TypeScript](https://www.typescriptlang.org/)
+- [Next.js](https://nextjs.org/) + [TypeScript](https://www.typescriptlang.org/)
 - [Vite](https://vitejs.dev/) (or CRA)
 - [Material UI](https://mui.com/)
 - [Redux Toolkit](https://redux-toolkit.js.org/)
@@ -22,7 +22,7 @@ A fully featured, cloud-native dashboard platform designed for real-time team co
 - [Redis](https://redis.io/)
 - [AWS S3](https://aws.amazon.com/s3/) + [Lambda](https://aws.amazon.com/lambda/)
 - [Python](https://www.python.org/) (for ETL)
-- [JWT](https://jwt.io/), OAuth2 (Google/GitHub)
+- [JWT](https://jwt.io/), OAuth2 (Google)
 
 ### Infrastructure
 - AWS ECS Fargate, RDS, Lambda, API Gateway
