@@ -1,4 +1,4 @@
-import Login from "@/app/auth/login"
+import Login from "@/app/pages/auth/login"
 
 export default function Home() {
   return (
@@ -9,5 +9,4 @@ export default function Home() {
       </div>
     </div>
   );
-  3
 }
