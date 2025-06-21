@@ -115,8 +115,8 @@ docker-compose up --build
 
 ### Or run manually
 ```bash
-cd client && npm install && npm run dev
-cd server && npm install && npm run dev
+cd frontend && npm install && npm run dev
+cd backend && npm install && npm run dev
 ```
 🛠 Environment Variables
 See .env.example for all necessary environment variables for local development.
