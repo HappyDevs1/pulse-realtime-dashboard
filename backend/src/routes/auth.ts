@@ -1,5 +1,9 @@
 import { Router } from "express";
 import passport from "passport";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const router = Router();
 
@@ -7,10 +11,25 @@ router.get("/google", passport.authenticate("google", { scope: ["profile", "emai
 
 router.get(
   "/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/login",
-    successRedirect: "/",
-  })
+  passport.authenticate("google", { session: false, failureRedirect: "/login" }),
+  (req, res) => {
+    const user = req.user as any;
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+        name: user.displayName,
+        email: user.emails?.[0]?.value,
+      },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    console.log("JWT Token: ", token)
+    res.json({ token });
+  }
 );
 
 router.get("/logout", (req, res) => {
