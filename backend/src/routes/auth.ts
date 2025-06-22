@@ -27,8 +27,7 @@ router.get(
       }
     );
 
-    console.log("JWT Token: ", token)
-    res.json({ token });
+    res.redirect(`http://localhost:3000/auth-success?token=${token}`)
   }
 );
 

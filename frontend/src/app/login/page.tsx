@@ -1,3 +1,7 @@
+"use client";
+
+import { loginUser } from "../services/auth";
+
 export default function Login() {
   return (
     <div className="flex items-center justify-center bg-black px-4">
@@ -11,6 +15,9 @@ export default function Login() {
 
         <button
           className="flex items-center justify-center w-full py-3 px-4 bg-white border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition text-sm sm:text-base"
+          onClick={async () => {
+            await loginUser()
+          }}
         >
           <img
             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
