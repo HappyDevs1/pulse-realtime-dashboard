@@ -19,7 +19,7 @@ export default function AuthSuccess() {
         console.log("Failure to save token");
       }
     } catch (error) {
-      console.error("Error in useState");
+      console.error("Error in useState", error);
     }
 
     router.push("/dashboard")

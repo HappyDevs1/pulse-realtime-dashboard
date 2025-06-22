@@ -20,6 +20,6 @@ export const loginUser = async () => {
     window.location.href = `${baseUrl}/auth/google`
 
   } catch (error) {
-    console.error("Login failed")
+    console.error("Login failed", error)
   }
 }
