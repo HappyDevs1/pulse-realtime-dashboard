@@ -5,7 +5,8 @@ import passport from 'passport';
 import authRoutes from './routes/auth';
 import './config/passport'; // Ensure passport configuration is loaded
 import cors from 'cors';
-
+import path from "path";
+import uploadRoute from "./routes/upload"
 
 dotenv.config();
 
@@ -29,6 +30,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/auth', authRoutes);
+
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
+app.use("/upload", uploadRoute);
 
 app.get('/profile', (req: Request, res: Response) => {
   interface GoogleUser {
