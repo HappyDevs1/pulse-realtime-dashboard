@@ -1,59 +1,72 @@
 import boto3
 import pandas as pd
+import psycopg2
+import os
 import io
 
 s3 = boto3.client('s3')
 
 def lambda_handler(event, context):
-    pd.options.mode.chained_assignment = None  # default='warn'
+    conn = None
+    cur = None
     
-    # Get bucket and file details from event
-    bucket_name = event['Records'][0]['s3']['bucket']['name']
-    object_key = event['Records'][0]['s3']['object']['key']
-    
-    print(f"Processing file: {object_key} from bucket: {bucket_name}")
+    try:
+        # Extract bucket details
+        bucket_name = event['Records'][0]['s3']['bucket']['name']
+        object_key = event['Records'][0]['s3']['object']['key']
+        
+        response = s3.get_object(Bucket=bucket_name, Key=object_key)
+        content = response['Body'].read().decode('utf-8')
+        df = pd.read_csv(io.StringIO(content))
 
-    # Read CSV file from S3
-    response = s3.get_object(Bucket=bucket_name, Key=object_key)
-    content = response['Body'].read().decode('utf-8')
-    df = pd.read_csv(io.StringIO(content))
+        df.columns = [col.strip().title() for col in df.columns]
+        df = df[['Total', 'Cogs', 'Gross Income', 'Date', 'Time', 'Product Line', 'Payment', 'Branch']].dropna()
 
-    # Standardization
-    df.columns = [col.strip().title() for col in df.columns]
-    print(f"Standardized Columns: {df.columns.tolist()}")
+        # Round money columns
+        df['Total'] = df['Total'].round(2)
+        df['Cogs'] = df['Cogs'].round(2)
+        df['Gross Income'] = df['Gross Income'].round(2)
 
-    # Filtering out important columns
-    important_cols = ['Total', 'Cogs', 'Gross Income', 'Date', 'Time', 'Product Line', 'Payment', 'Branch']
-    important = df[important_cols].copy()
-    print(f"Important Columns Head:\n{important.head()}")
+        # DB Connection
+        conn = psycopg2.connect(
+            host=os.environ['DB_HOST'],
+            dbname=os.environ['DB_NAME'],
+            user=os.environ['DB_USER'],
+            password=os.environ['DB_PASS'],
+            port=os.environ.get('DB_PORT', '5432')
+        )
+        cur = conn.cursor()
 
-    # Removing null values
-    remove_null_df = important.dropna()
+        insert_query = """
+            INSERT INTO sales_data (total, cogs, gross_income, date, time, product_line, payment, branch)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """
 
-    # Round money columns
-    money_cols = ['Total', 'Cogs', 'Gross Income']
-    remove_null_df[money_cols] = remove_null_df[money_cols].round(2)
+        for _, row in df.iterrows():
+            cur.execute(insert_query, (
+                row['Total'],
+                row['Cogs'],
+                row['Gross Income'],
+                row['Date'],
+                row['Time'],
+                row['Product Line'],
+                row['Payment'],
+                row['Branch']
+            ))
 
-    print(f"After Rounding Monetary Values:\n{remove_null_df.head()}")
+        conn.commit()
+        print(f"Inserted {len(df)} rows successfully.")
 
-    # Save cleaned data to CSV in-memory
-    output_buffer = io.StringIO()
-    remove_null_df.to_csv(output_buffer, index=False)
+    except Exception as e:
+        print(f"Error: {e}")
 
-    cleaned_csv = output_buffer.getvalue()
-
-
-    # Upload to another S3 bucket
-    output_bucket = 'pulse-cleaned-bucket'
-
-    # To avoid subfolders, use only the filename, not full object_key
-    filename = object_key.split('/')[-1].replace('.csv', '_cleaned.csv')
-    
-    s3.put_object(Bucket=output_bucket, Key=filename, Body=cleaned_csv)
-
-    print(f"Cleaned file saved to s3://{output_bucket}/{filename}")
+    finally:
+        if cur:
+            cur.close()
+        if conn:
+            conn.close()
 
     return {
         'statusCode': 200,
-        'body': f"File processed and cleaned data stored at {output_bucket}/{filename}"
+        'body': f"{len(df)} rows processed and inserted."
     }
