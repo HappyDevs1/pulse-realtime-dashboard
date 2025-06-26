@@ -4,7 +4,7 @@ import io
 
 s3 = boto3.client('s3')
 
-def pulse_lambda_handler(event, context):
+def lambda_handler(event, context):
     pd.options.mode.chained_assignment = None  # default='warn'
     
     # Get bucket and file details from event
@@ -29,65 +29,31 @@ def pulse_lambda_handler(event, context):
 
     # Removing null values
     remove_null_df = important.dropna()
-    print(f"After Removing Nulls:\n{remove_null_df.head()}")
 
-    # Group total by day
-    df['Date'] = pd.to_datetime(df['Date'])
-    daily_revenue = df.groupby(df['Date'].dt.date)['Total'].sum().reset_index()
-    daily_revenue.columns = ['Date', 'Daily_Total']
+    # Round money columns
+    money_cols = ['Total', 'Cogs', 'Gross Income']
+    remove_null_df[money_cols] = remove_null_df[money_cols].round(2)
 
-    # Group by Product Line
-    category_revenue = df.groupby('Product Line')['Total'].sum().reset_index().sort_values(by='Total', ascending=False)
-    category_revenue.columns = ['Product_Line', 'Total_Revenue']
+    print(f"After Rounding Monetary Values:\n{remove_null_df.head()}")
 
-    # Profit margin percentage
-    total_revenue = df['Total'].sum()
-    total_profit = df['Gross Income'].sum()
-    profit_margin_percent = (total_profit / total_revenue) * 100
-
-    # Payment classification
-    payment_distribution = df['Payment'].value_counts().reset_index()
-    payment_distribution.columns = ['Payment_Method', 'Count']
-
-    # Branch Revenue
-    branch_revenue = df.groupby('Branch')['Total'].sum().reset_index()
-    branch_revenue.columns = ['Branch', 'Total_Revenue']
-
-    # Combine results into a single DataFrame (or save them separately if needed)
-    summary_df = pd.DataFrame({
-        'Total_Revenue': [total_revenue],
-        'Total_Profit': [total_profit],
-        'Profit_Margin(%)': [profit_margin_percent]
-    })
-
-    # Save processed DataFrames to CSV in-memory
+    # Save cleaned data to CSV in-memory
     output_buffer = io.StringIO()
+    remove_null_df.to_csv(output_buffer, index=False)
 
-    # Example: Concatenate everything vertically, or save them separately
-    output_buffer.write("=== Daily Revenue ===\n")
-    daily_revenue.to_csv(output_buffer, index=False)
-    
-    output_buffer.write("\n=== Category Revenue ===\n")
-    category_revenue.to_csv(output_buffer, index=False)
+    cleaned_csv = output_buffer.getvalue()
 
-    output_buffer.write("\n=== Payment Distribution ===\n")
-    payment_distribution.to_csv(output_buffer, index=False)
 
-    output_buffer.write("\n=== Branch Revenue ===\n")
-    branch_revenue.to_csv(output_buffer, index=False)
-
-    output_buffer.write("\n=== Summary ===\n")
-    summary_df.to_csv(output_buffer, index=False)
-
-    # Upload the new CSV to another S3 bucket
+    # Upload to another S3 bucket
     output_bucket = 'pulse-cleaned-bucket'
-    output_key = f"{object_key.replace('.csv', '_cleaned.csv')}"
 
-    s3.put_object(Bucket=output_bucket, Key=output_key, Body=output_buffer.getvalue())
+    # To avoid subfolders, use only the filename, not full object_key
+    filename = object_key.split('/')[-1].replace('.csv', '_cleaned.csv')
+    
+    s3.put_object(Bucket=output_bucket, Key=filename, Body=cleaned_csv)
 
-    print(f"Cleaned file saved to s3://{output_bucket}/{output_key}")
+    print(f"Cleaned file saved to s3://{output_bucket}/{filename}")
 
     return {
         'statusCode': 200,
-        'body': f"File processed and cleaned data stored at {output_bucket}/{output_key}"
+        'body': f"File processed and cleaned data stored at {output_bucket}/{filename}"
     }
