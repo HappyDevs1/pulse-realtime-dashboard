@@ -1,17 +1,11 @@
 import { Sequelize, DataTypes } from "sequelize";
 
 export default (sequelize: Sequelize) => {
-  const User = sequelize.define("user", {
+  const Dataset = sequelize.define("dataset", {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true
-    },
-    name: {
-      type: DataTypes.STRING
-    },
-    email: {
-      type: DataTypes.TEXT
     },
     organisation_id: {
       type: DataTypes.INTEGER,
@@ -22,13 +16,12 @@ export default (sequelize: Sequelize) => {
       onUpdate: "CASCADE",
       onDelete: "SET NULL"
     },
-    role: {
+    s3_path: {
       type: DataTypes.STRING,
-      allowNull: false
-    }
+    },
   }, {
     freezeTableName: true, // Prevents Sequelize from pluralizing the table name
   });
 
-  return User;
+  return Dataset;
 };
