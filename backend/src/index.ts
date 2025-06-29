@@ -7,6 +7,8 @@ import './config/passport'; // Ensure passport configuration is loaded
 import cors from 'cors';
 import path from "path";
 import uploadRoute from "./routes/upload";
+import UserRoute from "./routes/user";
+import OrganisationRoute from "./routes/organisation";
 import db from "./models";
 
 dotenv.config();
@@ -19,12 +21,12 @@ db.sequelize.authenticate().then(() => {
 })
 
 // Production method of connecting to db
-// db.sequelize.sync();
+db.sequelize.sync();
 
 // Development method of connecting to db which dorp all the existing tables before starting the db
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and re-sync db");
-})
+// db.sequelize.sync({ force: true }).then(() => {
+//   console.log("Drop and re-sync db");
+// })
 
 const app: Application = express();
 const PORT = process.env.PORT || 8000;
@@ -45,11 +47,16 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(express.json());
+
+app.use("/api/users", UserRoute);
+app.use("/api/organisations", OrganisationRoute);
+app.use("/api/upload", uploadRoute);
+
 app.use('/auth', authRoutes);
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-app.use("/upload", uploadRoute);
 
 app.get('/profile', (req: Request, res: Response) => {
   interface GoogleUser {
