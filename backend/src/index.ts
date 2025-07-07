@@ -24,7 +24,8 @@ db.sequelize.authenticate().then(() => {
 // Development method of connecting to db which dorp all the existing tables before starting the db
 db.sequelize.sync({ force: true }).then(() => {
   console.log("Drop and re-sync db");
-})
+}).error((error: any) => {
+  console.error("Error syncing database: ", error)})
 
 const app: Application = express();
 const PORT = process.env.PORT || 8000;
