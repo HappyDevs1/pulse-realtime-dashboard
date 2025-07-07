@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { raw, Request, Response } from "express";
 // import { upload } from "../middleware/upload";
 import multer from "multer";
 import dotenv from "dotenv";
@@ -10,6 +10,7 @@ dotenv.config();
 
 const accessKey: any = process.env.AWS_ACCESS_KEY;
 const secretAccessKey: any = process.env.AWS_SECRET_ACCESS_KEY
+const rawBucket = process.env.AWS_RAW_BUCKET as string;
 
 const s3Client = new S3Client({
   region: 'us-east-1',
@@ -31,7 +32,7 @@ router.post("/data/:organisationId", upload.single("file"), async (req: Request,
   }
 
   const params = {
-    Bucket: process.env.AWS_RAW_BUCKET as string,
+    Bucket: rawBucket,
     Key: req.file.originalname,
     Body: req.file.buffer,
     ContentType: req.file.mimetype,
@@ -46,14 +47,12 @@ router.post("/data/:organisationId", upload.single("file"), async (req: Request,
 
     await s3Client.send(new PutObjectCommand(params))
 
-    const s3Path = `https://${process.env.AWS_RAW_BUCKET}.s3.amazonaws.com/${req.file.originalname}`;
+    const s3Path = `https://${rawBucket}.s3.amazonaws.com/${req.file.originalname}`;
 
     const savedDataset = await Dataset.create({
       organisation_id: organisationId,
       s3_path: s3Path,
     });
-
-    console.log("File uploaded successfully to: ", s3Path);
     
     res.status(200).json({
       message: "File uploaded successfully to S3 bucket",

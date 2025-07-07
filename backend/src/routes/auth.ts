@@ -10,6 +10,8 @@ const router = Router();
 
 const User = db.user;
 
+const jwtSecret = process.env.JWT_SECRET as string;
+
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 router.get(
@@ -45,7 +47,7 @@ router.get(
           name: user.name,
           email: user.email,
         },
-        process.env.JWT_SECRET as string,
+        jwtSecret,
         {
           expiresIn: "1d",
         }
@@ -53,8 +55,7 @@ router.get(
       
       res.redirect(`http://localhost:3000/auth-success?token=${token}`);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Server error during authentication" });
+      res.status(500).json({ message: "Internal server error" });
     }
 });
 

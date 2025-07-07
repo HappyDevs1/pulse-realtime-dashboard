@@ -6,7 +6,7 @@ import authRoutes from './routes/auth';
 import './config/passport'; // Ensure passport configuration is loaded
 import cors from 'cors';
 import path from "path";
-import uploadRoute from "./routes/upload";
+import UploadRoute from "./routes/upload";
 import UserRoute from "./routes/user";
 import OrganisationRoute from "./routes/organisation";
 import db from "./models";
@@ -51,7 +51,7 @@ app.use(express.json());
 
 app.use("/api/users", UserRoute);
 app.use("/api/organisations", OrganisationRoute);
-app.use("/api/upload", uploadRoute);
+app.use("/api/upload", UploadRoute);
 
 app.use('/auth', authRoutes);
 
