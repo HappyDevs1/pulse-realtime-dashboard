@@ -1,13 +1,17 @@
 import express, { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
+import http from 'http';
 import session from 'express-session';
 import passport from 'passport';
 import authRoutes from './routes/auth';
 import './config/passport'; // Ensure passport configuration is loaded
 import cors from 'cors';
 import path from "path";
-import uploadRoute from "./routes/upload";
+import UploadRoute from "./routes/upload";
+import UserRoute from "./routes/user";
+import OrganisationRoute from "./routes/organisation";
 import db from "./models";
+import { setupWebSocketServer } from './ws-server';
 
 dotenv.config();
 
@@ -19,15 +23,25 @@ db.sequelize.authenticate().then(() => {
 })
 
 // Production method of connecting to db
-// db.sequelize.sync();
+db.sequelize.sync();
 
 // Development method of connecting to db which dorp all the existing tables before starting the db
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and re-sync db");
-}).error((error: any) => {
-  console.error("Error syncing database: ", error)})
+// <<<<<<< feat/store-metadata-#21
+// // db.sequelize.sync({ force: true }).then(() => {
+// //   console.log("Drop and re-sync db");
+// // })
+// =======
+// db.sequelize.sync({ force: true }).then(() => {
+//   console.log("Drop and re-sync db");
+// }).error((error: any) => {
+//   console.error("Error syncing database: ", error)})
+// >>>>>>> main
 
 const app: Application = express();
+const server = http.createServer(app);
+
+setupWebSocketServer(server);
+
 const PORT = process.env.PORT || 8000;
 
 app.use(cors({
@@ -46,11 +60,16 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(express.json());
+
+app.use("/api/users", UserRoute);
+app.use("/api/organisations", OrganisationRoute);
+app.use("/api/upload", UploadRoute);
+
 app.use('/auth', authRoutes);
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-app.use("/upload", uploadRoute);
 
 app.get('/profile', (req: Request, res: Response) => {
   interface GoogleUser {

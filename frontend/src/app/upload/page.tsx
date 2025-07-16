@@ -1,20 +1,22 @@
 "use client";
 
-import React, { useState, DragEvent } from "react";
+import React, { useState, DragEvent, FormEvent } from "react";
+import { uploadFile } from "../services/upload";
+import SuccessPage from "../components/Success";
 
-export default function Upload () {
-
+export default function Upload() {
+  const [file, setFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleDrop = (e: DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     setDragActive(false);
-
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      setFileName(file.name);
-      // I will handle logic to send to api here
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile) {
+      setFile(droppedFile);
+      setFileName(droppedFile.name);
     }
   };
 
@@ -28,21 +30,53 @@ export default function Upload () {
   };
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFileName(file.name);
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setFileName(selectedFile.name);
     }
   };
 
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!file) return;
+
+    try {
+      const orgId = 1; // Will replace this with the actual organisation ID later
+      const response = await uploadFile(file, orgId.toString());
+
+      setShowSuccess(true);
+
+      console.log("File uploaded successfully:", response.data);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  };
+
+  if (showSuccess) {
+    return (
+      <SuccessPage
+        message="File uploaded successfully!"
+        buttonText="Back to Dashboard"
+        redirectPath="/dashboard" 
+      />
+    );
+  }
+
   return (
-    <div className="flex justify-center items-center min-h-[50vh]">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col items-center justify-center min-h-[50vh] gap-4 bg-black px-4"
+    >
       <label
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         htmlFor="file-upload"
         className={`w-full max-w-md flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 cursor-pointer transition-colors ${
-          dragActive ? "border-blue-400 bg-gray-800" : "border-gray-600 bg-black"
+          dragActive
+            ? "border-blue-400 bg-gray-800"
+            : "border-gray-600 bg-black"
         }`}
       >
         <svg
@@ -62,19 +96,31 @@ export default function Upload () {
         <p className="text-gray-300 text-center">
           {fileName ? (
             <>
-              <span className="text-green-400 font-medium">Uploaded:</span> {fileName}
+              <span className="text-green-400 font-medium">Selected:</span>{" "}
+              {fileName}
             </>
           ) : (
-            "Drag & drop your file here or click to upload"
+            "Drag & drop your file here or click to choose one"
           )}
         </p>
         <input
           id="file-upload"
           type="file"
           className="hidden"
+          accept=".csv"
           onChange={handleFileInput}
         />
       </label>
-    </div>
-  )
+
+      <button
+        type="submit"
+        disabled={!file}
+        className={`mt-2 bg-blue-600 text-white font-semibold py-2 px-6 rounded-xl shadow-md transition duration-300 ${
+          !file ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+        }`}
+      >
+        Submit File
+      </button>
+    </form>
+  );
 }
