@@ -6,9 +6,26 @@ import authRoutes from './routes/auth';
 import './config/passport'; // Ensure passport configuration is loaded
 import cors from 'cors';
 import path from "path";
-import uploadRoute from "./routes/upload"
+import uploadRoute from "./routes/upload";
+import db from "./models";
 
 dotenv.config();
+
+db.sequelize.authenticate().then(() => {
+  console.log("Connected to the database!");
+}).catch((error: any) => {
+  console.log("Cannot connect to the database! ", error)
+  process.exit();
+})
+
+// Production method of connecting to db
+// db.sequelize.sync();
+
+// Development method of connecting to db which dorp all the existing tables before starting the db
+db.sequelize.sync({ force: true }).then(() => {
+  console.log("Drop and re-sync db");
+}).error((error: any) => {
+  console.error("Error syncing database: ", error)})
 
 const app: Application = express();
 const PORT = process.env.PORT || 8000;
