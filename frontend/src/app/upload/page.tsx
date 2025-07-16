@@ -2,11 +2,13 @@
 
 import React, { useState, DragEvent, FormEvent } from "react";
 import { uploadFile } from "../services/upload";
+import SuccessPage from "../components/Success";
 
 export default function Upload() {
   const [file, setFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleDrop = (e: DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
@@ -42,11 +44,24 @@ export default function Upload() {
     try {
       const orgId = 1; // Will replace this with the actual organisation ID later
       const response = await uploadFile(file, orgId.toString());
+
+      setShowSuccess(true);
+
       console.log("File uploaded successfully:", response.data);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
   };
+
+  if (showSuccess) {
+    return (
+      <SuccessPage
+        message="File uploaded successfully!"
+        buttonText="Back to Dashboard"
+        redirectPath="/dashboard" 
+      />
+    );
+  }
 
   return (
     <form
@@ -59,7 +74,9 @@ export default function Upload() {
         onDrop={handleDrop}
         htmlFor="file-upload"
         className={`w-full max-w-md flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 cursor-pointer transition-colors ${
-          dragActive ? "border-blue-400 bg-gray-800" : "border-gray-600 bg-black"
+          dragActive
+            ? "border-blue-400 bg-gray-800"
+            : "border-gray-600 bg-black"
         }`}
       >
         <svg
@@ -79,7 +96,8 @@ export default function Upload() {
         <p className="text-gray-300 text-center">
           {fileName ? (
             <>
-              <span className="text-green-400 font-medium">Selected:</span> {fileName}
+              <span className="text-green-400 font-medium">Selected:</span>{" "}
+              {fileName}
             </>
           ) : (
             "Drag & drop your file here or click to choose one"
