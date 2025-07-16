@@ -1,5 +1,6 @@
 import express, { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
+import http from 'http';
 import session from 'express-session';
 import passport from 'passport';
 import authRoutes from './routes/auth';
@@ -10,6 +11,7 @@ import UploadRoute from "./routes/upload";
 import UserRoute from "./routes/user";
 import OrganisationRoute from "./routes/organisation";
 import db from "./models";
+import { setupWebSocketServer } from './ws-server';
 
 dotenv.config();
 
@@ -36,6 +38,10 @@ db.sequelize.sync();
 // >>>>>>> main
 
 const app: Application = express();
+const server = http.createServer(app);
+
+setupWebSocketServer(server);
+
 const PORT = process.env.PORT || 8000;
 
 app.use(cors({
