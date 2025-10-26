@@ -1,8 +1,14 @@
 {
-  "dependencies": {
-    "jsonwebtoken": "^9.0.2"
+  "name": "pulse-monorepo",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\""
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.10"
+    "concurrently": "^9.0.0"
   }
 }
